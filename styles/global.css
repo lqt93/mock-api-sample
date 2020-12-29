@@ -1,0 +1,22 @@
+@tailwind base;
+
+/* Write your own custom base styles here */
+
+/* Start purging... */
+@tailwind components;
+/* Stop purging. */
+
+/* Write your own custom component styles here */
+
+/* Start purging... */
+@tailwind utilities;
+/* Stop purging. */
+
+/* Your own custom utilities */
+.btn {
+  @apply py-2 px-4 font-semibold rounded-lg shadow-md;
+}
+
+.btn-green {
+  @apply text-white bg-green-500 hover:bg-green-700;
+}
