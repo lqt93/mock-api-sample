@@ -1,0 +1,7 @@
+{
+  "extends": ["airbnb", "react"],
+  "rules": {
+    "indent": [2, "tab"]
+  }
+  // more configuration options here!
+}
