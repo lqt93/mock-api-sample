@@ -4,5 +4,7 @@
     "strings": true
   },
   "tailwindCSS.validate": true,
-  "tailwindCSS.lint.cssConflict": "warning"
+  "tailwindCSS.lint.cssConflict": "warning",
+  "prettier.useTabs": false,
+  "prettier.singleQuote": true
 }
