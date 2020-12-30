@@ -3,11 +3,19 @@ import BlogTypes from 'types/blog';
 import BlogItem from '../BlogItem';
 
 const BlogList = ({ list }) => (
-  <ul>{list && list.map((item) => <BlogItem key={item.id} item={item} />)}</ul>
+  <ul>
+    {list.map((item) => (
+      <BlogItem key={item.id} item={item} />
+    ))}
+  </ul>
 );
 
+BlogList.defaultProps = {
+  list: [],
+};
+
 BlogList.propTypes = {
-  list: PropTypes.arrayOf(BlogTypes.BlogItemType).isRequired,
+  list: PropTypes.arrayOf(BlogTypes.BlogItemType),
 };
 
 export default BlogList;
