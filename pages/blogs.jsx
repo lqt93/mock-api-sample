@@ -1,3 +1,3 @@
-import BlogPage from 'domain/BlogPage';
+import Blogs from 'domain/Blogs';
 
-export default BlogPage;
+export default Blogs;

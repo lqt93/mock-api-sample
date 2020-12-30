@@ -1,4 +1,3 @@
-import HomePage from 'domain/HomePage';
+import Home from 'domain/Home';
 
-// Home Page
-export default HomePage;
+export default Home;
