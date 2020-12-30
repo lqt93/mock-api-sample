@@ -1,5 +1,14 @@
 {
   "extends": ["airbnb"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": [
+          "."
+        ]
+      }
+    }
+  },
   "rules": {
     "indent": ["error", 2],
     "no-tabs": 0,
