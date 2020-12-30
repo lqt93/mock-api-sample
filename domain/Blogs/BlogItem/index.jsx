@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import BlogTypes from 'types/blog';
 
 const BlogItem = ({ item }) => (
   <div>
@@ -11,13 +12,7 @@ const BlogItem = ({ item }) => (
 );
 
 BlogItem.propTypes = {
-  item: PropTypes.shape({
-    id: PropTypes.string,
-    createdAt: PropTypes.string,
-    title: PropTypes.string,
-    image: PropTypes.string,
-    content: PropTypes.string,
-  }).isRequired,
+  item: PropTypes.instanceOf(BlogTypes.BlogItemType).isRequired,
 };
 
 export default BlogItem;
