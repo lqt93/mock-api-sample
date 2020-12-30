@@ -1,10 +1,4 @@
-function HomePage() {
-  return (
-    <div>
-      <h1> Welcome to Next.js! </h1>
-      <button className="btn btn-green">Tailwinded Button</button>
-    </div>
-  );
-}
+import HomePage from '../domain/HomePage';
 
+// Home Page
 export default HomePage;
