@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-const BlogItemType = PropTypes.shape({
+const Post = PropTypes.shape({
   id: PropTypes.string,
   createdAt: PropTypes.string,
   title: PropTypes.string,
@@ -9,5 +9,5 @@ const BlogItemType = PropTypes.shape({
 }).isRequired;
 
 export default {
-  BlogItemType,
+  Post,
 };

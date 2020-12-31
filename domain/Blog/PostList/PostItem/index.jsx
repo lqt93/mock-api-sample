@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import BlogTypes from 'types/blog';
 
-const BlogItem = ({ item }) => (
+const PostItem = ({ item }) => (
   <div>
     <div>
       {item.id}
@@ -11,8 +11,8 @@ const BlogItem = ({ item }) => (
   </div>
 );
 
-BlogItem.propTypes = {
-  item: PropTypes.shape(BlogTypes.BlogItemType).isRequired,
+PostItem.propTypes = {
+  item: PropTypes.shape(BlogTypes.Post).isRequired,
 };
 
-export default BlogItem;
+export default PostItem;

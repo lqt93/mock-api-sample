@@ -4,8 +4,8 @@ const Home = () => (
   <div>
     <h1> Welcome Home </h1>
     <div>
-      <Link href="/blogs">
-        <a> Go to blogs </a>
+      <Link href="/blog">
+        <a> Go to blog </a>
       </Link>
     </div>
   </div>

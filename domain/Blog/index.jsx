@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import clientHttp from 'services/http/client';
 import Loading from 'components/Loading';
-import BlogList from './BlogList';
+import BlogList from './PostList';
 
-const Blogs = () => {
+const Blog = () => {
   const [blogs, setBlogs] = useState([]);
   useEffect(async () => {
     try {
@@ -15,10 +15,10 @@ const Blogs = () => {
   }, []);
   return (
     <div>
-      <h1> Welcome Blogs </h1>
+      <h1> Welcome Blog </h1>
       {!blogs.length ? <Loading /> : <BlogList list={blogs} />}
     </div>
   );
 };
 
-export default Blogs;
+export default Blog;
