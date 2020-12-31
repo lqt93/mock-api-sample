@@ -12,7 +12,7 @@ const BlogItem = ({ item }) => (
 );
 
 BlogItem.propTypes = {
-  item: PropTypes.instanceOf(BlogTypes.BlogItemType).isRequired,
+  item: PropTypes.shape(BlogTypes.BlogItemType).isRequired,
 };
 
 export default BlogItem;

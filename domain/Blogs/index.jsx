@@ -1,12 +1,14 @@
-import React from 'react';
-import http from 'services/http';
+import React, { useState, useEffect } from 'react';
+import clientHttp from 'services/http/client';
+import Loading from 'components/Loading';
 import BlogList from './BlogList';
 
 const Blogs = () => {
-  React.useEffect(async () => {
+  const [blogs, setBlogs] = useState([]);
+  useEffect(async () => {
     try {
-      const { data } = await http.get('/blogs');
-      console.log('>>>>>>>>>> ', data.length);
+      const { data } = await clientHttp.get('/blogs');
+      setBlogs(data);
     } catch (err) {
       console.log('err: ', err);
     }
@@ -14,7 +16,7 @@ const Blogs = () => {
   return (
     <div>
       <h1> Welcome Blogs </h1>
-      <BlogList />
+      {!blogs.length ? <Loading /> : <BlogList list={blogs} />}
     </div>
   );
 };
