@@ -4,9 +4,9 @@ import Loading from 'components/Loading';
 import Paginator from 'components/Paginator';
 import BlogList from './PostList';
 
-const findStep = (page, maxLength) => {
+const findStep = (page, maxLength, isPage = false) => {
   if (page < maxLength) return 1;
-  return Math.ceil(page / maxLength);
+  return isPage ? Math.floor(page / maxLength) : Math.ceil(page / maxLength);
 };
 
 const rangeOfCurrentPage = (currentPage, totalPages, maxLength) => {
@@ -24,8 +24,12 @@ const rangeOfCurrentPage = (currentPage, totalPages, maxLength) => {
   return range;
 };
 
-const TOTAL_PAGES = 11;
-const MAX_LENGTH = 3;
+const postRangeInCurrentPage = (page, totalItems, maxLength) => {
+  const rangeEndTemp = page * maxLength;
+  const rangeStart = rangeEndTemp - maxLength;
+  const rangeEnd = rangeEndTemp > totalItems ? totalItems : rangeEndTemp;
+  return [rangeStart, rangeEnd];
+};
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -33,20 +37,39 @@ const Blog = () => {
   useEffect(async () => {
     const { data } = await http.get('/blogs');
     setPosts(data);
-  }, []);
-  const range = rangeOfCurrentPage(page, TOTAL_PAGES, MAX_LENGTH);
-
+  }, [page]);
+  const TOTAL_ITEM_NUMBER = posts.length;
+  const MAX_LENGTH_PAGES = 5;
+  const MAX_LENGTH_POST_IN_PAGE = findStep(
+    TOTAL_ITEM_NUMBER,
+    MAX_LENGTH_PAGES,
+    true,
+  );
+  const TOTAL_PAGES = findStep(TOTAL_ITEM_NUMBER, MAX_LENGTH_POST_IN_PAGE);
+  const range = rangeOfCurrentPage(page, TOTAL_PAGES, MAX_LENGTH_PAGES);
+  const postRange = postRangeInCurrentPage(
+    page,
+    TOTAL_ITEM_NUMBER,
+    MAX_LENGTH_POST_IN_PAGE,
+  );
+  console.log('page changed: ', page, postRange);
   return (
     <div>
       <h1> Welcome Blog </h1>
-      <Paginator
-        page={page}
-        totalPages={TOTAL_PAGES}
-        onSelectPage={setPage}
-        range={range}
-        maxLength={MAX_LENGTH}
-      />
-      {!posts.length ? <Loading /> : <BlogList list={posts} />}
+      {!posts.length ? (
+        <Loading />
+      ) : (
+        <div>
+          <BlogList list={posts.slice(postRange[0], postRange[1] + 1)} />
+          <Paginator
+            page={page}
+            totalPages={TOTAL_PAGES}
+            onSelectPage={setPage}
+            range={range}
+            maxLength={MAX_LENGTH_PAGES}
+          />
+        </div>
+      )}
     </div>
   );
 };
