@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import PropTypes from 'prop-types';
 import BlogTypes from 'types/blog';
 import BlogItem from './PostItem';
@@ -18,4 +19,4 @@ PostList.propTypes = {
   list: PropTypes.arrayOf(BlogTypes.Post),
 };
 
-export default PostList;
+export default memo(PostList);

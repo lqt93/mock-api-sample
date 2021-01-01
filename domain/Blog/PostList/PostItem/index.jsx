@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import BlogTypes from 'types/blog';
@@ -18,4 +19,4 @@ PostItem.propTypes = {
   item: PropTypes.shape(BlogTypes.Post).isRequired,
 };
 
-export default PostItem;
+export default memo(PostItem);

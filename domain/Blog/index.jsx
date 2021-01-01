@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import http from 'services/http';
 import Loading from 'components/Loading';
 import Paginator from 'components/Paginator';
@@ -24,43 +24,57 @@ const rangeOfCurrentPage = (currentPage, totalPages, maxLength) => {
   return range;
 };
 
-const postRangeInCurrentPage = (page, totalItems, maxLength) => {
-  const rangeEndTemp = page * maxLength;
-  const rangeStart = rangeEndTemp - maxLength;
-  const rangeEnd = rangeEndTemp > totalItems ? totalItems : rangeEndTemp;
-  return [rangeStart, rangeEnd];
-};
+// const postRangeInCurrentPage = (page, totalItems, maxLength) => {
+//   const rangeEndTemp = page * maxLength;
+//   const rangeStart = rangeEndTemp - maxLength;
+//   const rangeEnd = rangeEndTemp > totalItems ? totalItems : rangeEndTemp;
+//   return [rangeStart, rangeEnd];
+// };
+
+const MAX_LENGTH_POST_IN_PAGE = 10;
+
+let TOTAL_PAGES = 0;
+let MAX_LENGTH_PAGES = 0;
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [range, setRange] = useState([]);
+
+  const getPosts = async () => {
+    setLoading(true);
+    const tempRange = rangeOfCurrentPage(page, TOTAL_PAGES, 5);
+    setRange(tempRange);
+    const { data } = await http.get(`/blogs?page=${page}&limit=${MAX_LENGTH_POST_IN_PAGE}`);
+    setPosts(data);
+    setLoading(false);
+  };
+
   useEffect(async () => {
     const { data } = await http.get('/blogs');
-    setPosts(data);
+    MAX_LENGTH_PAGES = findStep(
+      data.length,
+      MAX_LENGTH_POST_IN_PAGE,
+      true,
+    );
+    TOTAL_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE);
+    await getPosts();
+    setLoading(false);
+  }, []);
+
+  useEffect(async () => {
+    await getPosts();
   }, [page]);
-  const TOTAL_ITEM_NUMBER = posts.length;
-  const MAX_LENGTH_PAGES = 5;
-  const MAX_LENGTH_POST_IN_PAGE = findStep(
-    TOTAL_ITEM_NUMBER,
-    MAX_LENGTH_PAGES,
-    true,
-  );
-  const TOTAL_PAGES = findStep(TOTAL_ITEM_NUMBER, MAX_LENGTH_POST_IN_PAGE);
-  const range = rangeOfCurrentPage(page, TOTAL_PAGES, MAX_LENGTH_PAGES);
-  const postRange = postRangeInCurrentPage(
-    page,
-    TOTAL_ITEM_NUMBER,
-    MAX_LENGTH_POST_IN_PAGE,
-  );
-  console.log('page changed: ', page, postRange);
+
   return (
     <div>
       <h1> Welcome Blog </h1>
-      {!posts.length ? (
+      {loading ? (
         <Loading />
       ) : (
         <div>
-          <BlogList list={posts.slice(postRange[0], postRange[1] + 1)} />
+          <BlogList list={posts} />
           <Paginator
             page={page}
             totalPages={TOTAL_PAGES}
@@ -74,4 +88,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default memo(Blog);
