@@ -5,7 +5,8 @@
       "@/domain/*": ["domain/*"],
       "@/components/*": ["components/*"],
       "@/types/*": ["types/*"],
-      "@/services/*": ["services/*"]
+      "@/services/*": ["services/*"],
+      "@/hooks/*": ["hooks/*"],
     }
   }
 }

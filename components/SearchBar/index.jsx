@@ -1,19 +1,6 @@
 import { memo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value]);
-  return debouncedValue;
-}
+import { useDebounce } from 'hooks/common';
 
 const SearchBar = ({ onSearchChange }) => {
   const [inputValue, setInput] = useState('');

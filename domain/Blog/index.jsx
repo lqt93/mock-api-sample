@@ -1,13 +1,12 @@
 import {
-  useState,
-  useEffect,
-  memo,
-  useRef,
+  useState, useEffect, memo,
 } from 'react';
 import http from 'services/http';
 import Loading from 'components/Loading';
 import Paginator from 'components/Paginator';
 import SearchBar from 'components/SearchBar';
+import SortBar from 'components/SortBar';
+import { usePrevious } from 'hooks/common';
 import BlogList from './PostList';
 
 const findStep = (page, maxLength, isPage = false) => {
@@ -30,25 +29,16 @@ const rangeOfCurrentPage = (currentPage, totalPages, maxLength) => {
   return range;
 };
 
-function usePrevious(value) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
-
-// const postRangeInCurrentPage = (page, totalItems, maxLength) => {
-//   const rangeEndTemp = page * maxLength;
-//   const rangeStart = rangeEndTemp - maxLength;
-//   const rangeEnd = rangeEndTemp > totalItems ? totalItems : rangeEndTemp;
-//   return [rangeStart, rangeEnd];
-// };
+const generateUrl = (searchTerm, page, sortBy, order, limit) => (searchTerm
+  ? `/blogs?search=${searchTerm}&page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}`
+  : `/blogs?page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}`);
 
 const MAX_LENGTH_POST_IN_PAGE = 10;
 
 let TOTAL_PAGES = 0;
 let MAX_LENGTH_PAGES = 0;
+
+const getPostQueue = [];
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -56,14 +46,19 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState([]);
   const [fetchUrl, setFetchUrl] = useState('');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [order, setOrder] = useState('asc');
   const prevFetchUrl = usePrevious(fetchUrl);
+
   const getPosts = async (url) => {
-    console.log('get posts: ', url);
     setLoading(true);
     const tempRange = rangeOfCurrentPage(page, TOTAL_PAGES, 5);
     setRange(tempRange);
     const { data } = await http.get(url);
-    setPosts(data);
+    if (url === getPostQueue[0]) {
+      setPosts(data);
+      getPostQueue.length = 0;
+    }
     setLoading(false);
   };
 
@@ -71,33 +66,41 @@ const Blog = () => {
     const { data } = await http.get('/blogs');
     MAX_LENGTH_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE, true);
     TOTAL_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE);
-    setFetchUrl(`/blogs?page=${page}&limit=${MAX_LENGTH_POST_IN_PAGE}`);
-    setLoading(false);
+    const url = generateUrl('', page, sortBy, order, MAX_LENGTH_POST_IN_PAGE);
+    setFetchUrl(url);
   }, []);
 
   const search = async (value) => {
     setPage(1);
     setLoading(true);
-    const url = `/blogs?${value ? 'search=' : ''}${encodeURI(value.trim())}`;
-    const { data } = await http.get(url);
+    const searchTerm = encodeURI(value.trim());
+    const urlToGetTotalPages = `/blogs?${value ? 'search=' : ''}${searchTerm}`;
+    const { data } = await http.get(urlToGetTotalPages);
     MAX_LENGTH_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE, true);
     TOTAL_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE);
     const tempRange = rangeOfCurrentPage(page, TOTAL_PAGES, 5);
     setRange(tempRange);
-    setFetchUrl(
-      `${url}${value ? '&' : ''}page=${page}&limit=${MAX_LENGTH_POST_IN_PAGE}`,
+    const urlToGetFirstPagePosts = generateUrl(
+      searchTerm,
+      page,
+      sortBy,
+      order,
+      MAX_LENGTH_POST_IN_PAGE,
     );
+    setFetchUrl(urlToGetFirstPagePosts);
   };
-
-  useEffect(async () => {
-    setFetchUrl(`/blogs?page=${page}&limit=${MAX_LENGTH_POST_IN_PAGE}`);
-  }, [page]);
 
   useEffect(() => {
     if (Boolean(fetchUrl) && prevFetchUrl !== fetchUrl) {
+      getPostQueue.unshift(fetchUrl);
       getPosts(fetchUrl);
     }
   }, [fetchUrl]);
+
+  useEffect(() => {
+    setPage(1);
+    setFetchUrl(generateUrl('', page, sortBy, order, MAX_LENGTH_POST_IN_PAGE));
+  }, [order, sortBy, page]);
 
   return (
     <div>
@@ -106,6 +109,12 @@ const Blog = () => {
       {loading && <Loading />}
       {!loading && Boolean(posts.length) && (
         <div>
+          <SortBar
+            sortBy={sortBy}
+            order={order}
+            onSortByChange={setSortBy}
+            onOrderChange={setOrder}
+          />
           <BlogList list={posts} />
           <Paginator
             page={page}
