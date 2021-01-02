@@ -1,4 +1,5 @@
 import { useState, useEffect, memo } from 'react';
+import Head from 'next/head';
 import http from 'services/http';
 import Loading from 'components/Loading';
 import Paginator from 'components/Paginator';
@@ -80,6 +81,9 @@ const Blog = () => {
 
   return (
     <div className="w-screen">
+      <Head>
+        <title> Mock API Blog </title>
+      </Head>
       <h1 className="text-blue-700 text-7xl font-mono text-center">
         Mock API Blog
       </h1>
