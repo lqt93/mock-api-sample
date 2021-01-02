@@ -5,10 +5,10 @@ import Paginator from 'components/Paginator';
 import SearchBar from 'components/SearchBar';
 import SortBar from 'components/SortBar';
 import { usePrevious } from 'hooks/common';
+import { SORT, BLOG } from 'services/constants';
 import BlogList from './PostList';
 import { calculateRange, rangeOfCurrentPage, generateUrl } from './util';
 
-const POSTS_PER_PAGE = 10;
 const getPostQueue = [];
 let TOTAL_PAGES = 0;
 let PAGES_PER_DISPLAY_TIME = 0;
@@ -19,8 +19,8 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState([]);
   const [fetchUrl, setFetchUrl] = useState('');
-  const [sortBy, setSortBy] = useState('createdAt');
-  const [order, setOrder] = useState('asc');
+  const [sortBy, setSortBy] = useState(SORT.CREATED_AT);
+  const [order, setOrder] = useState(SORT.ASC);
   const prevFetchUrl = usePrevious(fetchUrl);
 
   const getPosts = async (url) => {
@@ -36,10 +36,10 @@ const Blog = () => {
   const getFirstPagePosts = (totalItemsNumber, urlToGetFirstPagePosts) => {
     PAGES_PER_DISPLAY_TIME = calculateRange(
       totalItemsNumber,
-      POSTS_PER_PAGE,
+      BLOG.POSTS_PER_PAGE,
       true,
     );
-    TOTAL_PAGES = calculateRange(totalItemsNumber, POSTS_PER_PAGE);
+    TOTAL_PAGES = calculateRange(totalItemsNumber, BLOG.POSTS_PER_PAGE);
     setRange(rangeOfCurrentPage(page, TOTAL_PAGES, PAGES_PER_DISPLAY_TIME));
     setFetchUrl(urlToGetFirstPagePosts);
   };
@@ -49,7 +49,7 @@ const Blog = () => {
     const totalItemsNumber = data.length;
     getFirstPagePosts(
       totalItemsNumber,
-      generateUrl('', page, sortBy, order, POSTS_PER_PAGE),
+      generateUrl('', page, sortBy, order, BLOG.POSTS_PER_PAGE),
     );
   }, []);
 
@@ -63,7 +63,7 @@ const Blog = () => {
     const totalItemsNumber = data.length;
     getFirstPagePosts(
       totalItemsNumber,
-      generateUrl(searchTerm, page, sortBy, order, POSTS_PER_PAGE),
+      generateUrl(searchTerm, page, sortBy, order, BLOG.POSTS_PER_PAGE),
     );
   };
 
@@ -75,7 +75,7 @@ const Blog = () => {
   }, [fetchUrl]);
 
   useEffect(() => {
-    setFetchUrl(generateUrl('', page, sortBy, order, POSTS_PER_PAGE));
+    setFetchUrl(generateUrl('', page, sortBy, order, BLOG.POSTS_PER_PAGE));
   }, [order, sortBy, page]);
 
   return (
