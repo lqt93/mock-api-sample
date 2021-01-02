@@ -9,12 +9,12 @@ const SearchBar = ({ onSearchChange }) => {
     onSearchChange(debouncedValue);
   }, [debouncedValue]);
   return (
-    <div className="relative mr-6 my-2">
+    <div className="w-full flex justify-center my-2">
       <input
         type="search"
         value={inputValue}
         onChange={(e) => setInput(e.target.value)}
-        className="bg-purple-white shadow rounded border-0 p-3"
+        className="bg-purple-white shadow rounded border-0 p-3 w-full"
         placeholder="Search"
       />
     </div>

@@ -1,6 +1,4 @@
-import {
-  useState, useEffect, memo,
-} from 'react';
+import { useState, useEffect, memo } from 'react';
 import http from 'services/http';
 import Loading from 'components/Loading';
 import Paginator from 'components/Paginator';
@@ -36,7 +34,11 @@ const Blog = () => {
   };
 
   const getFirstPagePosts = (totalItemsNumber, urlToGetFirstPagePosts) => {
-    PAGES_PER_DISPLAY_TIME = calculateRange(totalItemsNumber, POSTS_PER_PAGE, true);
+    PAGES_PER_DISPLAY_TIME = calculateRange(
+      totalItemsNumber,
+      POSTS_PER_PAGE,
+      true,
+    );
     TOTAL_PAGES = calculateRange(totalItemsNumber, POSTS_PER_PAGE);
     setRange(rangeOfCurrentPage(page, TOTAL_PAGES, PAGES_PER_DISPLAY_TIME));
     setFetchUrl(urlToGetFirstPagePosts);
@@ -45,22 +47,24 @@ const Blog = () => {
   useEffect(async () => {
     const { data } = await http.get('/blogs');
     const totalItemsNumber = data.length;
-    getFirstPagePosts(totalItemsNumber, generateUrl('', page, sortBy, order, POSTS_PER_PAGE));
+    getFirstPagePosts(
+      totalItemsNumber,
+      generateUrl('', page, sortBy, order, POSTS_PER_PAGE),
+    );
   }, []);
 
   const search = async (value) => {
     setPage(1);
     setLoading(true);
     const searchTerm = encodeURI(value.trim());
-    const { data } = await http.get(`/blogs?${value ? 'search=' : ''}${searchTerm}`);
+    const { data } = await http.get(
+      `/blogs?${value ? 'search=' : ''}${searchTerm}`,
+    );
     const totalItemsNumber = data.length;
-    getFirstPagePosts(totalItemsNumber, generateUrl(
-      searchTerm,
-      page,
-      sortBy,
-      order,
-      POSTS_PER_PAGE,
-    ));
+    getFirstPagePosts(
+      totalItemsNumber,
+      generateUrl(searchTerm, page, sortBy, order, POSTS_PER_PAGE),
+    );
   };
 
   useEffect(() => {
@@ -75,29 +79,37 @@ const Blog = () => {
   }, [order, sortBy, page]);
 
   return (
-    <div>
-      <h1> Welcome Blog </h1>
-      <SearchBar onSearchChange={search} />
-      {loading && <Loading />}
-      {!loading && Boolean(posts.length) && (
-        <div>
-          <SortBar
-            sortBy={sortBy}
-            order={order}
-            onSortByChange={setSortBy}
-            onOrderChange={setOrder}
-          />
-          <BlogList list={posts} />
-          <Paginator
-            page={page}
-            totalPages={TOTAL_PAGES}
-            onSelectPage={setPage}
-            range={range}
-            maxLength={PAGES_PER_DISPLAY_TIME}
-          />
+    <div className="w-screen">
+      <h1 className="text-blue-700 text-7xl font-mono text-center">
+        Mock API Blog
+      </h1>
+      <div className="flex justify-center items-center my-5 w-full">
+        <div className="w-full flex flex-col justify-center items-center">
+          <div className="w-8/12">
+            <SearchBar onSearchChange={search} />
+            <SortBar
+              sortBy={sortBy}
+              order={order}
+              onSortByChange={setSortBy}
+              onOrderChange={setOrder}
+            />
+          </div>
+          {loading && <Loading />}
+          {!loading && Boolean(posts.length) && (
+            <div className="w-8/12">
+              <BlogList list={posts} />
+              <Paginator
+                page={page}
+                totalPages={TOTAL_PAGES}
+                onSelectPage={setPage}
+                range={range}
+                maxLength={PAGES_PER_DISPLAY_TIME}
+              />
+            </div>
+          )}
+          {!loading && !posts.length && <div> No result </div>}
         </div>
-      )}
-      {!loading && !posts.length && <div> No result </div>}
+      </div>
     </div>
   );
 };

@@ -16,9 +16,9 @@ const PostPage = ({ post }) => (
           className="object-cover rounded-md"
         />
       </div>
-      <div className="w-full p-1.5">
-        <div className="text-lg">{post.content}</div>
-      </div>
+      <article className="w-full p-1.5">
+        <p className="text-lg">{post.content}</p>
+      </article>
     </div>
   </div>
 );
