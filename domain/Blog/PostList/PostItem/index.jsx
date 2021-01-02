@@ -4,15 +4,28 @@ import Link from 'next/link';
 import BlogTypes from 'types/blog';
 
 const PostItem = ({ item }) => (
-  <div>
-    <Link href={`/blog/${item.id}`}>
-      <a>
-        {item.id}
-        {' - '}
-        {item.title}
-      </a>
-    </Link>
-  </div>
+  <Link href={`/blog/${item.id}`}>
+    <a>
+      <div className="relative flex my-10">
+        <div className="relative w-48 h-36 rounded-md">
+          <img
+            src="/no-image.jpg"
+            alt="no resource"
+            className="absolute object-contain rounded-md"
+          />
+          <img
+            src={item.image}
+            alt={item.title}
+            className="absolute object-contain rounded-md"
+          />
+        </div>
+        <div className="w-96 font-mono p-1.5">
+          <div className="text-2xl">{item.title}</div>
+          <div className="text-base">{item.content}</div>
+        </div>
+      </div>
+    </a>
+  </Link>
 );
 
 PostItem.propTypes = {
