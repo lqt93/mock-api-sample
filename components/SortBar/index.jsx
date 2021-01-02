@@ -6,12 +6,13 @@ import { SORT } from 'services/constants';
 const SortBar = ({
   onSortByChange, onOrderChange, sortBy, order,
 }) => (
-  <div>
-    Sort by:
+  <div className="font-mono my-3 mx-1">
+    <text className="font-bold"> Sort by: </text>
     <Dropdown
       options={[SORT.CREATED_AT, SORT.TITLE]}
       defaultValue={sortBy}
       onChange={onSortByChange}
+      className="mr-5"
     />
     <Dropdown
       options={[SORT.ASC, SORT.DESC]}

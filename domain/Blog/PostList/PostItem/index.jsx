@@ -6,7 +6,7 @@ import BlogTypes from 'types/blog';
 const PostItem = ({ item }) => (
   <Link href={`/blog/${item.id}`}>
     <a>
-      <div className="relative flex my-10">
+      <div className="relative flex mb-6">
         <div className="relative w-48 h-36 rounded-md">
           <img
             src="/no-image.jpg"

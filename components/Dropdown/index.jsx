@@ -1,10 +1,13 @@
 import { useState, memo } from 'react';
 import PropTypes from 'prop-types';
 
-const Dropdown = ({ options, onChange, defaultValue }) => {
+const Dropdown = ({
+  options, onChange, defaultValue, className,
+}) => {
   const [currentValue, setCurrentValue] = useState(defaultValue);
   return (
     <select
+      className={`${className} border-gray-700 border-2 rounded-md`}
       value={currentValue}
       onChange={(e) => {
         const val = e.target.value;
@@ -29,6 +32,7 @@ Dropdown.propTypes = {
   options: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired,
   defaultValue: PropTypes.string.isRequired,
+  className: PropTypes.string.isRequired,
 };
 
 export default memo(Dropdown);
