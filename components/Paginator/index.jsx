@@ -22,7 +22,7 @@ const Paginator = ({
 
   return (
     <div
-      className="relative z-0 inline-flex shadow-sm -space-x-px"
+      className="relative z-0 shadow-sm -space-x-px w-full flex justify-center"
       aria-label="Pagination"
     >
       <PaginatorArrow right={false} onSelect={onSelectArrow} />
