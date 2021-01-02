@@ -1,5 +1,5 @@
 const Loading = () => (
-  <div> Loading... </div>
+  <img className="w-48 h-48" src="/loading.gif" alt="loading" />
 );
 
 export default Loading;
