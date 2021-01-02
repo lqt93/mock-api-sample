@@ -1,5 +1,5 @@
 {
-  "name": "gauga-web",
+  "name": "mock-api-web",
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
