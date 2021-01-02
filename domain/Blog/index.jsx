@@ -8,37 +8,12 @@ import SearchBar from 'components/SearchBar';
 import SortBar from 'components/SortBar';
 import { usePrevious } from 'hooks/common';
 import BlogList from './PostList';
+import { calculateRange, rangeOfCurrentPage, generateUrl } from './util';
 
-const findStep = (page, maxLength, isPage = false) => {
-  if (page < maxLength) return 1;
-  return isPage ? Math.floor(page / maxLength) : Math.ceil(page / maxLength);
-};
-
-const rangeOfCurrentPage = (currentPage, totalPages, maxLength) => {
-  const currentStep = findStep(currentPage, maxLength);
-  const maxStep = findStep(totalPages, maxLength);
-  const tempRangeMax = currentStep * maxLength;
-  const rangeMax = currentStep === maxStep && tempRangeMax > totalPages
-    ? totalPages
-    : tempRangeMax;
-  const rangeMin = tempRangeMax - maxLength + 1;
-  const range = [];
-  for (let i = rangeMin; i <= rangeMax; i += 1) {
-    range.push(i);
-  }
-  return range;
-};
-
-const generateUrl = (searchTerm, page, sortBy, order, limit) => (searchTerm
-  ? `/blogs?search=${searchTerm}&page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}`
-  : `/blogs?page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}`);
-
-const MAX_LENGTH_POST_IN_PAGE = 10;
-
-let TOTAL_PAGES = 0;
-let MAX_LENGTH_PAGES = 0;
-
+const POSTS_PER_PAGE = 10;
 const getPostQueue = [];
+let TOTAL_PAGES = 0;
+let PAGES_PER_DISPLAY_TIME = 0;
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -52,8 +27,6 @@ const Blog = () => {
 
   const getPosts = async (url) => {
     setLoading(true);
-    const tempRange = rangeOfCurrentPage(page, TOTAL_PAGES, 5);
-    setRange(tempRange);
     const { data } = await http.get(url);
     if (url === getPostQueue[0]) {
       setPosts(data);
@@ -62,32 +35,32 @@ const Blog = () => {
     setLoading(false);
   };
 
+  const getFirstPagePosts = (totalItemsNumber, urlToGetFirstPagePosts) => {
+    PAGES_PER_DISPLAY_TIME = calculateRange(totalItemsNumber, POSTS_PER_PAGE, true);
+    TOTAL_PAGES = calculateRange(totalItemsNumber, POSTS_PER_PAGE);
+    setRange(rangeOfCurrentPage(page, TOTAL_PAGES, PAGES_PER_DISPLAY_TIME));
+    setFetchUrl(urlToGetFirstPagePosts);
+  };
+
   useEffect(async () => {
     const { data } = await http.get('/blogs');
-    MAX_LENGTH_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE, true);
-    TOTAL_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE);
-    const url = generateUrl('', page, sortBy, order, MAX_LENGTH_POST_IN_PAGE);
-    setFetchUrl(url);
+    const totalItemsNumber = data.length;
+    getFirstPagePosts(totalItemsNumber, generateUrl('', page, sortBy, order, POSTS_PER_PAGE));
   }, []);
 
   const search = async (value) => {
     setPage(1);
     setLoading(true);
     const searchTerm = encodeURI(value.trim());
-    const urlToGetTotalPages = `/blogs?${value ? 'search=' : ''}${searchTerm}`;
-    const { data } = await http.get(urlToGetTotalPages);
-    MAX_LENGTH_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE, true);
-    TOTAL_PAGES = findStep(data.length, MAX_LENGTH_POST_IN_PAGE);
-    const tempRange = rangeOfCurrentPage(page, TOTAL_PAGES, 5);
-    setRange(tempRange);
-    const urlToGetFirstPagePosts = generateUrl(
+    const { data } = await http.get(`/blogs?${value ? 'search=' : ''}${searchTerm}`);
+    const totalItemsNumber = data.length;
+    getFirstPagePosts(totalItemsNumber, generateUrl(
       searchTerm,
       page,
       sortBy,
       order,
-      MAX_LENGTH_POST_IN_PAGE,
-    );
-    setFetchUrl(urlToGetFirstPagePosts);
+      POSTS_PER_PAGE,
+    ));
   };
 
   useEffect(() => {
@@ -98,8 +71,7 @@ const Blog = () => {
   }, [fetchUrl]);
 
   useEffect(() => {
-    setPage(1);
-    setFetchUrl(generateUrl('', page, sortBy, order, MAX_LENGTH_POST_IN_PAGE));
+    setFetchUrl(generateUrl('', page, sortBy, order, POSTS_PER_PAGE));
   }, [order, sortBy, page]);
 
   return (
@@ -121,7 +93,7 @@ const Blog = () => {
             totalPages={TOTAL_PAGES}
             onSelectPage={setPage}
             range={range}
-            maxLength={MAX_LENGTH_PAGES}
+            maxLength={PAGES_PER_DISPLAY_TIME}
           />
         </div>
       )}
