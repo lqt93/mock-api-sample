@@ -26,13 +26,14 @@ const Dropdown = ({
 
 Dropdown.defaultProps = {
   options: [],
+  className: '',
 };
 
 Dropdown.propTypes = {
   options: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func.isRequired,
   defaultValue: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
 };
 
 export default memo(Dropdown);
