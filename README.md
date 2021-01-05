@@ -1,7 +1,13 @@
 # mock-api-sample
 A sample for using APIs from mockapi.io
 
-Before starting, add ".env.local" file with content:
+### Before starting
+Install all dependencies:
+```sh
+npm i
+```
+
+Create ".env.local" file in root directory with content below:
 ```sh
 NEXT_PUBLIC_API_URL=url_that_you_use
 ```
