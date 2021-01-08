@@ -1,6 +1,8 @@
 # mock-api-sample
 A sample for using APIs from mockapi.io
 
+Example: https://mock-api-sample-latest.vercel.app
+
 ### Before starting
 Install all dependencies:
 ```sh
